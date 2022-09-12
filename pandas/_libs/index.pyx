@@ -4,17 +4,10 @@ import numpy as np
 
 cimport numpy as cnp
 from numpy cimport (
-    float32_t,
-    float64_t,
-    int8_t,
-    int16_t,
-    int32_t,
     int64_t,
     intp_t,
     ndarray,
     uint8_t,
-    uint16_t,
-    uint32_t,
     uint64_t,
 )
 
@@ -35,7 +28,6 @@ from pandas._libs import (
 
 from pandas._libs.lib cimport eq_NA_compat
 from pandas._libs.missing cimport (
-    C_NA as NA,
     checknull,
     is_matching_na,
 )
@@ -1061,12 +1053,12 @@ cdef class ExtensionEngine(SharedEngine):
 
     cdef ndarray _get_bool_indexer(self, val):
         if checknull(val):
-            return self.values.isna().view("uint8")
+            return self.values.isna()
 
         try:
             return self.values == val
         except TypeError:
-            # e.g. if __eq__ returns a BooleanArray instead of ndarry[bool]
+            # e.g. if __eq__ returns a BooleanArray instead of ndarray[bool]
             try:
                 return (self.values == val).to_numpy(dtype=bool, na_value=False)
             except (TypeError, AttributeError) as err:

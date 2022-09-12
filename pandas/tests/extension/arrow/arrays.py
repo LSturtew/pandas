@@ -23,8 +23,7 @@ from pandas.api.extensions import (
     take,
 )
 from pandas.api.types import is_scalar
-from pandas.core.arraylike import OpsMixin
-from pandas.core.arrays._mixins import ArrowExtensionArray as _ArrowExtensionArray
+from pandas.core.arrays.arrow import ArrowExtensionArray as _ArrowExtensionArray
 from pandas.core.construction import extract_array
 
 
@@ -72,7 +71,7 @@ class ArrowStringDtype(ExtensionDtype):
         return ArrowStringArray
 
 
-class ArrowExtensionArray(OpsMixin, _ArrowExtensionArray):
+class ArrowExtensionArray(_ArrowExtensionArray):
     _data: pa.ChunkedArray
 
     @classmethod
@@ -92,7 +91,7 @@ class ArrowExtensionArray(OpsMixin, _ArrowExtensionArray):
         arr = pa.chunked_array([pa.array(np.asarray(values))])
         return cls(arr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__}({repr(self._data)})"
 
     def __contains__(self, obj) -> bool:
@@ -179,20 +178,20 @@ class ArrowExtensionArray(OpsMixin, _ArrowExtensionArray):
 
 
 class ArrowBoolArray(ArrowExtensionArray):
-    def __init__(self, values):
+    def __init__(self, values) -> None:
         if not isinstance(values, pa.ChunkedArray):
             raise ValueError
 
         assert values.type == pa.bool_()
         self._data = values
-        self._dtype = ArrowBoolDtype()
+        self._dtype = ArrowBoolDtype()  # type: ignore[assignment]
 
 
 class ArrowStringArray(ArrowExtensionArray):
-    def __init__(self, values):
+    def __init__(self, values) -> None:
         if not isinstance(values, pa.ChunkedArray):
             raise ValueError
 
         assert values.type == pa.string()
         self._data = values
-        self._dtype = ArrowStringDtype()
+        self._dtype = ArrowStringDtype()  # type: ignore[assignment]

@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Iterator
 
 import numpy as np
 import pytest
@@ -194,13 +195,13 @@ class TestFromRecords:
 
     def test_from_records_non_tuple(self):
         class Record:
-            def __init__(self, *args):
+            def __init__(self, *args) -> None:
                 self.args = args
 
             def __getitem__(self, i):
                 return self.args[i]
 
-            def __iter__(self):
+            def __iter__(self) -> Iterator:
                 return iter(self.args)
 
         recs = [Record(1, 2, 3), Record(4, 5, 6), Record(7, 8, 9)]

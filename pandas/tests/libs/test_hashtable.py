@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import struct
 import tracemalloc
+from typing import Generator
 
 import numpy as np
 import pytest
@@ -13,7 +14,7 @@ from pandas.core.algorithms import isin
 
 
 @contextmanager
-def activated_tracemalloc():
+def activated_tracemalloc() -> Generator[None, None, None]:
     tracemalloc.start()
     try:
         yield
@@ -254,7 +255,9 @@ class TestHashTableUnsorted:
     ):
         # Test for memory errors after internal vector
         # reallocations (GH 7157)
-        vals = np.array(np.random.randn(1000), dtype=dtype)
+        # Changed from using np.random.rand to range
+        # which could cause flaky CI failures when safely_resizes=False
+        vals = np.array(range(1000), dtype=dtype)
 
         # GH 21688 ensures we can deal with read-only memory views
         vals.setflags(write=writable)
